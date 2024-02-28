@@ -64,6 +64,7 @@ fn main() {
                     }
                 }
             }
+            // if a command is not implemented, run it on default $SHELL level
             _ => println!("unknown command")
         }
     }
