@@ -64,8 +64,37 @@ fn main() {
                     }
                 }
             }
+            "find" => {
+                // find [PATH] [OPTIONS] [VALUES]
+                // simple file search
+                let mut res_vec = vec![];
+                file_read("./", "main.rs", &mut res_vec);
+                println!("{:?}", res_vec)
+            }
+            "grep" => {}
             // if a command is not implemented, run it on default $SHELL level
             _ => println!("unknown command")
+        }
+    }
+}
+
+// DFS approach to search for a file name by calling it recursively
+fn file_read(path: &str, name: &str, res_arr: &mut Vec<String>) {
+
+    // loop through the files till it matches the name
+    let file_bytes = fs::read_dir(path).expect("error reading file from path {path}");
+    for file in file_bytes {
+        let file_path = file.unwrap().path();
+        if file_path.is_dir() {
+            file_read(file_path.to_str().unwrap(), name, res_arr)
+        } else {
+            let file_display = file_path.to_str().expect("error converting to str");
+            let final_file_trimmed = file_display.replace("./", "");
+            let final_file_arr: Vec<&str> = final_file_trimmed.split("/").collect();
+            let file_name = final_file_arr[final_file_arr.len() - 1];
+            if file_name == name {
+                res_arr.push(file_display.to_string())
+            }
         }
     }
 }
